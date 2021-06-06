@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "326084061714",
+    "project_id": "flutter-reservations",
+    "storage_bucket": "flutter-reservations.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:326084061714:android:835ab1d53e4255be2ac6cb",
+        "android_client_info": {
+          "package_name": "com.example.flutter_reservations"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "326084061714-his1kjbsl4hcgcmet5r8mk3lo50ddcs8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.flutter_reservations",
+            "certificate_hash": "dcd855e813263c33816bbf09a02fea30d0df6e88"
+          }
+        },
+        {
+          "client_id": "326084061714-0bdqavfcheeam1mnq2c6ku2hqhjb7l2f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQLnJrzWh92yQWkg5IYmfkywyDYGhpg_M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "326084061714-0bdqavfcheeam1mnq2c6ku2hqhjb7l2f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
