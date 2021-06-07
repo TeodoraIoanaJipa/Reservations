@@ -27,25 +27,7 @@ class _RestaurantsListState extends State<RestaurantsList> {
 
   _RestaurantsListState({this.user});
 
-  @override
-  Widget build(BuildContext context) {
-    if (restaurantsList.isEmpty) {
-      restaurantsList = [];
-      updateListView();
-    }
-
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'FoodZzz',
-            style: TextStyle(color: Colors.black),
-          ),
-          backgroundColor: Colors.orange,
-        ),
-        body: _buildList(context),
-        drawer:
-            DrawerMenu(user: user, favoriteRestaurants: favoriteRestaurants));
-  }
+  
 
   void _goToRestaurantDetails(Restaurant restaurant) {
     Navigator.push(
@@ -156,10 +138,24 @@ class _RestaurantsListState extends State<RestaurantsList> {
     });
   }
 
-  void insertReservation(Reservation reservation) {
-    final Future<Database> dbFuture = databaseHelper.initializeDatabase();
-    dbFuture.then((database) {
-      databaseHelper.insertReservation(reservation);
-    });
+  @override
+  Widget build(BuildContext context) {
+    if (restaurantsList.isEmpty) {
+      restaurantsList = [];
+      updateListView();
+    }
+
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'FoodZzz',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: RestaurantDetailsPage.darkRedColor,
+        ),
+        body: _buildList(context),
+        drawer:
+            DrawerMenu(user: user, favoriteRestaurants: favoriteRestaurants));
   }
+
 }

@@ -4,6 +4,7 @@ import 'package:flutter_reservations/authentication.dart';
 import 'package:flutter_reservations/pages/login_page.dart';
 import 'package:flutter_reservations/model/restaurant.dart';
 import 'package:flutter_reservations/pages/restaurantsList.dart';
+import 'package:flutter_reservations/pages/reservations_history.dart';
 
 class DrawerMenu extends StatelessWidget {
   final User? user;
@@ -47,6 +48,14 @@ class DrawerMenu extends StatelessWidget {
           child: child,
         );
       },
+    );
+  }
+
+  Route _routeToHistoryPage() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          ReservationsHistoryList(
+              user: user, favoriteRestaurants: favoriteRestaurants),
     );
   }
 
@@ -121,14 +130,15 @@ class DrawerMenu extends StatelessWidget {
               ),
               accountName: Text(
                 user!.displayName ?? '',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: Colors.black, fontSize: 18),
               ),
-              accountEmail: Text(user!.email ?? ''),
+              accountEmail: Text(user!.email ?? '',
+                  style: TextStyle(color: Colors.black, fontSize: 15)),
               currentAccountPicture: _getGoogleImage(),
             ),
             ListTile(
               leading: Icon(Icons.home),
-              title: Text("Restaurants"),
+              title: Text("Acasă"),
               onTap: () {
                 Navigator.pushReplacement(context, _routeToRestaurantsPage());
               },
@@ -138,6 +148,13 @@ class DrawerMenu extends StatelessWidget {
               title: Text("Restaurante favorite"),
               onTap: () {
                 _getFavoriteRestaurants(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.history),
+              title: Text("Istoric rezervări"),
+              onTap: () {
+                Navigator.pushReplacement(context, _routeToHistoryPage());
               },
             ),
             ListTile(

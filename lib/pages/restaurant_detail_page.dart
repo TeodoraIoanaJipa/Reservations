@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 
 class RestaurantDetailsPage extends StatelessWidget {
+  
   final Restaurant restaurant;
 
   final User? user;
@@ -174,6 +175,7 @@ class RestaurantDetailsPage extends StatelessWidget {
               MaterialPageRoute(
                   builder: (context) => ReservationPage(
                         selectedRestaurant: restaurant,
+                        user: user
                       )));
         },
         color: darkRedColor,

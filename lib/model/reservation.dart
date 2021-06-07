@@ -2,11 +2,11 @@
 class Reservation {
   late int? id;
   late int? numberOfPersons;
-  late DateTime? reservationDate;
+  late String? reservationDate;
   late String? reservationHour;
-  late DateTime? requestedDate;
+  late String? requestedDate;
   late int? restaurantId;
-  late int? userId;
+  late String? userId;
 
   Reservation(
       {this.id,
@@ -20,12 +20,12 @@ class Reservation {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'numberOfPersons': numberOfPersons,
-      'reservationDate': reservationDate,
-      'reservationHour': reservationHour,
-      'requestedDate': requestedDate,
-      'restaurantId': restaurantId,
-      'userId': userId,
+      'number_of_persons': numberOfPersons,
+      'reservation_date': reservationDate,
+      'reservation_hour': reservationHour,
+      'requested_date': requestedDate,
+      'restaurant_id': restaurantId,
+      'user_id': userId,
     };
   }
 
@@ -33,9 +33,9 @@ class Reservation {
     return Reservation(
         id: map['id'],
         numberOfPersons: map['number_of_persons'],
-        reservationDate: DateTime.parse(map['reservation_date']),
+        reservationDate: map['reservation_date'],
         reservationHour: map['reservation_hour'],
-        requestedDate: DateTime.parse(map['requested_date']),
+        requestedDate: map['requested_date'],
         restaurantId: map['restaurant_id'],
         userId: map['user_id'],
         );

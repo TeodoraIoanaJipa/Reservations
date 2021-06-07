@@ -9,8 +9,37 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage>
+    with SingleTickerProviderStateMixin {
   bool _isSigningIn = false;
+
+  late AnimationController _controller;
+
+  late Animation _burgerPictureAnimation;
+  late Animation _welcomeFontSizeAnimation;
+  
+  @override
+  void initState() {
+    super.initState();
+
+    _controller =
+        AnimationController(vsync: this, duration: Duration(seconds: 5));
+
+    _burgerPictureAnimation = Tween(begin: 0.0, end: 200.0).animate(
+        CurvedAnimation(
+            parent: _controller,
+            curve: Interval(0.0, 0.20, curve: Curves.easeOut)));
+
+    _welcomeFontSizeAnimation = Tween(begin: 0.0, end: 34.0).animate(
+        CurvedAnimation(
+            parent: _controller,
+            curve: Interval(0.20, 0.45, curve: Curves.easeOut)));
+
+    _controller.forward();
+    _controller.addListener(() {
+      setState(() {});
+    });
+  }
 
   Widget _signInButton() {
     var deviceSize = MediaQuery.of(context).size;
@@ -76,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: Colors.orange.shade200,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(
@@ -95,17 +124,18 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     SizedBox(height: 20),
                     Container(
-                      height: MediaQuery.of(context).size.height / 2.2,
-                      width: MediaQuery.of(context).size.width / 2,
+                      height: _burgerPictureAnimation.value / 2.2,
+                      width: _burgerPictureAnimation.value / 1.0,
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage('assets/deliciousburger.png'),
                         ),
                       ),
                     ),
+                    Row(),
                     Text("Bine ai venit!",
                         style: GoogleFonts.libreBaskerville(
-                          fontSize: 26.0,
+                          fontSize: _welcomeFontSizeAnimation.value,
                           color: Colors.black,
                         )),
                   ],

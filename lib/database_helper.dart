@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_reservations/model/reservation.dart';
 import 'package:flutter_reservations/model/restaurant.dart';
 import 'package:path_provider/path_provider.dart';
@@ -50,7 +51,7 @@ class DatabaseHelper {
     );
 
     await db.execute(
-        'CREATE TABLE $reservationsTableName(id INTEGER PRIMARY KEY, number_of_persons INTEGER, reservation_date TEXT, reservation_hour TEXT, requested_date TEXT, restaurant_id INTEGER, user_id INTEGER);');
+        'CREATE TABLE $reservationsTableName(id INTEGER PRIMARY KEY, number_of_persons INTEGER, reservation_date TEXT, reservation_hour TEXT, requested_date TEXT, restaurant_id INTEGER, user_id TEXT);');
 
     await db.execute(insertRestaurantsQuery);
   }
@@ -66,6 +67,14 @@ class DatabaseHelper {
     Database db = await this.database;
 
     return await db.query(reservationsTableName, orderBy: 'id ASC');
+  }
+
+  Future<List<Map<String, dynamic>>> getUsersReservationsList(
+      String uid) async {
+    Database db = await this.database;
+
+    return await db.query(reservationsTableName,
+        where: "user_id = '" + uid +"'", orderBy: 'id ASC');
   }
 
   Future<int> insertReservation(Reservation reservation) async {
@@ -101,11 +110,24 @@ class DatabaseHelper {
     var restaurants = await getRestaurantsList();
     int count = restaurants.length;
 
-    var reservations = await getReservationsList();
-    print(reservations);
-
     return List.generate(count, (i) {
       return Restaurant.fromMapObject(restaurants[i]);
+    });
+  }
+
+  Future<List<Reservation>> getReservations() async {
+    var reservations = await getReservationsList();
+
+    return List.generate(reservations.length, (i) {
+      return Reservation.fromMapObject(reservations[i]);
+    });
+  }
+
+  Future<List<Reservation>> getUsersReservations(String uid) async {
+    var reservations = await getUsersReservationsList(uid);
+
+    return List.generate(reservations.length, (i) {
+      return Reservation.fromMapObject(reservations[i]);
     });
   }
 }
