@@ -6,6 +6,7 @@ import 'package:flutter_reservations/model/reservation_dto.dart';
 import 'package:flutter_reservations/model/restaurant.dart';
 import 'package:flutter_reservations/pages/drawer-menu.dart';
 import 'package:flutter_reservations/pages/restaurant_detail_page.dart';
+import 'package:flutter_reservations/util/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
@@ -38,8 +39,7 @@ class _ReservationsHistoryListState extends State<ReservationsHistoryList> {
     );
     return ElevatedButton(
         style: ElevatedButton.styleFrom(
-            primary: RestaurantDetailsPage.darkRedColor,
-            fixedSize: Size(100, 10)),
+            primary: Utils.darkRedColor, fixedSize: Size(100, 10)),
         onPressed: () {
           final Future<Database> dbFuture = databaseHelper.initializeDatabase();
           dbFuture.then((database) {
@@ -83,12 +83,17 @@ class _ReservationsHistoryListState extends State<ReservationsHistoryList> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 new Flexible(
+                    child: GestureDetector(
                   child: Image.network(
                     reservation.restaurant!.imageLink,
                     fit: BoxFit.cover,
-                    width: 160,
+                    width: 140,
                   ),
-                ),
+                  onTap: () {
+                    Utils.goToRestaurantDetails(context,
+                        reservation.restaurant!, user!, <Restaurant>[]);
+                  },
+                )),
                 Container(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
@@ -124,7 +129,7 @@ class _ReservationsHistoryListState extends State<ReservationsHistoryList> {
                 borderRadius: BorderRadius.only(
                     topRight: Radius.circular(15),
                     bottomRight: Radius.circular(15)),
-                color: RestaurantDetailsPage.darkRedColor,
+                color: Utils.darkRedColor,
               ),
               width: 5,
             ),
@@ -233,7 +238,7 @@ class _ReservationsHistoryListState extends State<ReservationsHistoryList> {
             'FoodZzz',
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: RestaurantDetailsPage.darkRedColor,
+          backgroundColor: Utils.darkRedColor,
         ),
         body: _buildGridView(context),
         drawer:

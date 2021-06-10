@@ -4,6 +4,7 @@ import 'package:flutter_reservations/model/reservation.dart';
 import 'package:flutter_reservations/model/restaurant.dart';
 import 'package:flutter_reservations/pages/drawer-menu.dart';
 import 'package:flutter_reservations/pages/restaurant_detail_page.dart';
+import 'package:flutter_reservations/util/utils.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,10 +15,10 @@ class RestaurantsList extends StatefulWidget {
 
   const RestaurantsList({Key? key, this.user}) : super(key: key);
   @override
-  _RestaurantsListState createState() => _RestaurantsListState(user: user);
+  RestaurantsListState createState() => RestaurantsListState(user: user);
 }
 
-class _RestaurantsListState extends State<RestaurantsList> {
+class RestaurantsListState extends State<RestaurantsList> {
   DatabaseHelper databaseHelper = DatabaseHelper();
   var restaurantsList = <Restaurant>[];
   var count;
@@ -25,22 +26,11 @@ class _RestaurantsListState extends State<RestaurantsList> {
 
   final User? user;
 
-  _RestaurantsListState({this.user});
+  final String applicationName = 'FoodZzz';
 
-  
+  RestaurantsListState({this.user});
 
-  void _goToRestaurantDetails(Restaurant restaurant) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => RestaurantDetailsPage(
-                  restaurant: restaurant,
-                  user: user,
-                  favoriteRestaurants: favoriteRestaurants,
-                )));
-  }
-
-  Widget _iconsRow(bool favorite, Restaurant restaurant) {
+  Widget iconsRow(bool favorite, Restaurant restaurant) {
     return Wrap(
       spacing: 12,
       children: <Widget>[
@@ -60,36 +50,17 @@ class _RestaurantsListState extends State<RestaurantsList> {
             });
           },
         ),
-        GestureDetector(
-          child:
-              Icon(Icons.keyboard_arrow_right, color: Colors.black, size: 31),
-          onTap: () {
-            _goToRestaurantDetails(restaurant);
-          },
-        ),
+        Utils.goToIcon(context, restaurant, user!, favoriteRestaurants),
       ],
     );
   }
 
-  Widget _buildRow(BuildContext context, Restaurant restaurant) {
-    final alreadyFavorite = favoriteRestaurants.contains(restaurant);
-
+  Widget buildRow(
+      BuildContext context, Restaurant restaurant, bool alreadyFavorite) {
     return Card(
         child: new Column(
       children: <Widget>[
-        GestureDetector(
-            child: Container(
-                margin: EdgeInsets.only(bottom: 15.0),
-                height: MediaQuery.of(context).size.height * 0.3,
-                decoration: new BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: NetworkImage(restaurant.imageLink),
-                  ),
-                )),
-            onTap: () {
-              _goToRestaurantDetails(restaurant);
-            }),
+        Utils.restaurantImage(context, restaurant, user!, favoriteRestaurants),
         Container(
             margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
             child: Row(
@@ -103,21 +74,23 @@ class _RestaurantsListState extends State<RestaurantsList> {
                   ),
                 ),
                 Spacer(),
-                _iconsRow(alreadyFavorite, restaurant)
+                iconsRow(alreadyFavorite, restaurant)
               ],
             )),
         Container(
             margin: EdgeInsets.all(10),
-            child: RestaurantDetailsPage.getAddress(context, restaurant))
+            child: Utils.getAddress(context, restaurant))
       ],
     ));
   }
 
-  Widget _buildList(BuildContext context) {
+  Widget buildList(BuildContext context, List<Restaurant> restaurants) {
     return ListView.separated(
-        itemCount: restaurantsList.length,
+        itemCount: restaurants.length,
         itemBuilder: (context, index) {
-          return _buildRow(context, restaurantsList[index]);
+          final alreadyFavorite =
+              favoriteRestaurants.contains(restaurants[index]);
+          return buildRow(context, restaurants[index], alreadyFavorite);
         },
         separatorBuilder: (context, index) {
           return Divider();
@@ -148,14 +121,13 @@ class _RestaurantsListState extends State<RestaurantsList> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            'FoodZzz',
+            applicationName,
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: RestaurantDetailsPage.darkRedColor,
+          backgroundColor: Utils.darkRedColor,
         ),
-        body: _buildList(context),
+        body: buildList(context, this.restaurantsList),
         drawer:
             DrawerMenu(user: user, favoriteRestaurants: favoriteRestaurants));
   }
-
 }

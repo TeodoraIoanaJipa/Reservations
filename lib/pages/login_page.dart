@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reservations/authentication.dart';
-import 'package:flutter_reservations/pages/restaurantsList.dart';
+import 'package:flutter_reservations/pages/restaurants_home_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,7 +17,13 @@ class _LoginPageState extends State<LoginPage>
 
   late Animation _burgerPictureAnimation;
   late Animation _welcomeFontSizeAnimation;
-  
+
+  @override
+  dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();

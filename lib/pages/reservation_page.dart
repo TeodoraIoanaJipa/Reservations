@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_reservations/model/reservation_dto.dart';
 import 'package:flutter_reservations/model/reservation.dart';
 import 'package:flutter_reservations/model/restaurant.dart';
-import 'package:flutter_reservations/pages/restaurant_detail_page.dart';
-import 'package:flutter_reservations/reservation_form.dart';
+import 'package:flutter_reservations/pages/reservation_form.dart';
+import 'package:flutter_reservations/util/utils.dart';
 
 class ReservationPage extends StatelessWidget {
   Restaurant selectedRestaurant;
@@ -26,12 +26,14 @@ class ReservationPage extends StatelessWidget {
             "Rezerva acum la " + selectedRestaurant.name,
             style: TextStyle(color: Colors.black),
           ),
-          backgroundColor: RestaurantDetailsPage.darkRedColor,
+          backgroundColor: Utils.darkRedColor,
         ),
         body: Container(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: ReservationForm(
+              user: user!,
+              restaurant: selectedRestaurant,
               reservation: reservation,
             ),
           ),

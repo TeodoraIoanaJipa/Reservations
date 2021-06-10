@@ -1,21 +1,28 @@
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:time_picker_widget/time_picker_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reservations/database_helper.dart';
 import 'package:flutter_reservations/model/reservation_dto.dart';
 import 'package:flutter_reservations/model/reservation.dart';
-import 'package:flutter_reservations/pages/restaurant_detail_page.dart';
+import 'package:flutter_reservations/model/restaurant.dart';
+import 'package:flutter_reservations/util/utils.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ReservationForm extends StatefulWidget {
+  User user;
   Reservation reservation;
-  ReservationForm({Key? key, required this.reservation}) : super(key: key);
+  Restaurant restaurant;
+  ReservationForm(
+      {Key? key,
+      required this.user,
+      required this.reservation,
+      required this.restaurant})
+      : super(key: key);
 
   @override
-  _ReservationFormState createState() =>
-      _ReservationFormState(reservation: reservation);
+  _ReservationFormState createState() => _ReservationFormState(
+      user: user, reservation: reservation, restaurant: restaurant);
 }
 
 class _ReservationFormState extends State<ReservationForm> {
@@ -24,13 +31,19 @@ class _ReservationFormState extends State<ReservationForm> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _dateController = TextEditingController();
   DateTime selectedDate = DateTime.now();
+  User user;
   Reservation reservation;
+  Restaurant restaurant;
   ReservationDto reservationDto = new ReservationDto();
 
-  _ReservationFormState({required this.reservation});
+  _ReservationFormState(
+      {required this.user,
+      required this.reservation,
+      required this.restaurant});
 
   int _currentIntValue = 2;
-  late NumberPicker integerNumberPicker;
+  int _currentHourPicked = 12;
+
   var selectedTime;
 
   _selectDate(BuildContext context) async {
@@ -85,7 +98,7 @@ class _ReservationFormState extends State<ReservationForm> {
           {_currentIntValue = value, reservationDto.numberOfPersons = value}),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: RestaurantDetailsPage.darkRedColor),
+        border: Border.all(color: Utils.darkRedColor),
       ),
     );
   }
@@ -110,17 +123,46 @@ class _ReservationFormState extends State<ReservationForm> {
     });
   }
 
+  int getTime(var hour) {
+    var time = hour.split(":")[0];
+    int? openingHour = int.tryParse(time);
+
+    if (time.startsWith("00")) {
+      openingHour = 24;
+    } else if (time.startsWith("0")) {
+      openingHour = int.parse(time[1]);
+    }
+
+    return openingHour!;
+  }
+
+  Widget _hourPicker() {
+    var openingHour = getTime(restaurant.openingTime);
+    var closingHour = getTime(restaurant.closingTime);
+
+    return NumberPicker(
+      value: _currentHourPicked,
+      minValue: openingHour,
+      maxValue: closingHour,
+      step: 1,
+      itemHeight: 50,
+      axis: Axis.vertical,
+      onChanged: (value) => setState(() => {
+            _currentHourPicked = value,
+            reservationDto.reservationHour = value.toString()
+          }),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Utils.darkRedColor),
+      ),
+    );
+  }
+
   Widget _submitButton() {
     var snackBarSuccess = SnackBar(
       content: Text('Felicitări! Ai rezervat pentru ' +
           reservationDto.numberOfPersons.toString() +
           ' persoane'),
-      action: SnackBarAction(
-        label: 'Undo',
-        onPressed: () {
-          // Some code to undo the change.
-        },
-      ),
     );
 
     final snackBarError = SnackBar(
@@ -141,22 +183,28 @@ class _ReservationFormState extends State<ReservationForm> {
         ),
         onPressed: () {
           if (reservationDto.numberOfPersons == null ||
-              reservationDto.reservationDate == null) {
+              reservationDto.reservationDate == null ||
+              reservationDto.reservationHour == null) {
             ScaffoldMessenger.of(context).showSnackBar(snackBarError);
           } else {
             reservation.numberOfPersons = reservationDto.numberOfPersons;
             reservation.reservationDate =
                 reservationDto.reservationDate.toString();
-            reservation.reservationHour = "8:00";
+            reservation.reservationHour = reservationDto.reservationHour;
             reservation.requestedDate = DateTime.now().toString();
 
             print(reservation);
             insertReservation(reservation);
             ScaffoldMessenger.of(context).showSnackBar(snackBarSuccess);
+
+            Future.delayed(const Duration(milliseconds: 500), () {
+              Navigator.pushReplacement(
+                  context, Utils.routeToHistoryPage(user, <Restaurant>[]));
+            });
             getReservations();
           }
         },
-        color: RestaurantDetailsPage.darkRedColor,
+        color: Utils.darkRedColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
         ),
@@ -176,17 +224,22 @@ class _ReservationFormState extends State<ReservationForm> {
     // List<int> _availableHours = [1, 4, 6, 8, 12];
     // List<int> _availableMinutes = [0, 10, 30, 45, 50];
 
-    // final TimeOfDay? result = await showTimePicker(
-    //   context: context,
-    //   // It is a must if you provide selectableTimePredicate
-    //   initialTime: TimeOfDay(
-    //       hour: _availableHours.first, minute: _availableMinutes.first),
-    // );
-    // if (result != null) {
-    //   setState(() {
-    //     selectedTime = result.format(context);
-    //   });
+    // print(restaurant);
+    // var hour = restaurant.openingTime.split(':')[0];
+    // int openingHour;
+    // if (hour[0] == '0') {
+    //   openingHour = int.parse(hour[1]);
+    //   print(openingHour);
     // }
+
+    // await showCustomTimePicker(
+    //         context: context,
+    //         // It is a must if you provide selectableTimePredicate
+    //         onFailValidation: (context) => print('Unavailable selection'),
+    //         initialTime: TimeOfDay(hour: 8, minute: 0),
+    //         selectableTimePredicate: (time) =>
+    //             time.hour > 7 && time.hour < 14 && time.minute % 10 == 0)
+    //     .then((time) => setState(() => selectedTime = time?.format(context)));
   }
 
   @override
@@ -210,7 +263,7 @@ class _ReservationFormState extends State<ReservationForm> {
               SizedBox(height: 16),
               Text('Selectează ora rezervării',
                   style: Theme.of(context).textTheme.headline6),
-              ElevatedButton(onPressed: _show, child: Text('Ora rezervarii')),
+              _hourPicker(),
               _submitButton(),
             ],
           )

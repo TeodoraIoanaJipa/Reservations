@@ -24,13 +24,14 @@ class MapsRestaurantLocationState extends State<MapsRestaurantLocation> {
   @override
   Widget build(BuildContext context) {
     List<Marker> googleMapsPins = [];
+
     googleMapsPins.add(Marker(
         markerId: MarkerId('restaurant'),
         draggable: false,
         position: LatLng(latitude, longitude)));
 
     return new SizedBox(
-      height: 300,
+      height: 350,
       width: 300,
       child: GoogleMap(
         mapType: MapType.normal,

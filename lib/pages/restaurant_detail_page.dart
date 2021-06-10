@@ -4,12 +4,10 @@ import 'package:flutter_reservations/maps-location.dart';
 import 'package:flutter_reservations/model/restaurant.dart';
 import 'package:flutter_reservations/pages/drawer-menu.dart';
 import 'package:flutter_reservations/pages/reservation_page.dart';
+import 'package:flutter_reservations/util/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
-
 class RestaurantDetailsPage extends StatelessWidget {
-  
   final Restaurant restaurant;
 
   final User? user;
@@ -18,34 +16,12 @@ class RestaurantDetailsPage extends StatelessWidget {
 
   final String buttonText = "Rezervă o masă";
 
-  static Color darkRedColor =
-      Color(int.parse("#b41700".replaceAll('#', '0xff')));
-
   RestaurantDetailsPage(
       {Key? key,
       required this.restaurant,
       required this.user,
       required this.favoriteRestaurants})
       : super(key: key);
-
-  static Widget getAddress(BuildContext context, Restaurant restaurant) {
-    return Container(
-      child: new Row(
-        children: <Widget>[
-          new Icon(Icons.location_on, color: darkRedColor),
-          new Text(
-            restaurant.address,
-            maxLines: 2,
-            style: GoogleFonts.libreBaskerville(
-              color: darkRedColor,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
-          )
-        ],
-      ),
-    );
-  }
 
   Widget getDetailsText(BuildContext context) {
     var restaurantName = Flexible(
@@ -76,12 +52,12 @@ class RestaurantDetailsPage extends StatelessWidget {
         Container(
           width: 220.0,
           child: new Divider(
-            color: darkRedColor,
+            color: Utils.darkRedColor,
             thickness: 2,
           ),
         ),
         Container(
-          child: getAddress(context, restaurant),
+          child: Utils.getAddress(context, restaurant),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -92,10 +68,10 @@ class RestaurantDetailsPage extends StatelessWidget {
                     padding: EdgeInsets.only(right: 10.0),
                     child: Row(
                       children: [
-                        Icon(Icons.schedule_rounded, color: darkRedColor),
+                        Icon(Icons.schedule_rounded, color: Utils.darkRedColor),
                         Text(
                           restaurant.openingTime + "-" + restaurant.closingTime,
-                          style: TextStyle(color: darkRedColor),
+                          style: TextStyle(color: Utils.darkRedColor),
                         )
                       ],
                     ))),
@@ -104,7 +80,7 @@ class RestaurantDetailsPage extends StatelessWidget {
                 child: Container(
                   child: new Text(
                     "\$" + restaurant.priceCategory,
-                    style: TextStyle(color: darkRedColor),
+                    style: TextStyle(color: Utils.darkRedColor),
                   ),
                 ))
           ],
@@ -155,7 +131,7 @@ class RestaurantDetailsPage extends StatelessWidget {
         textAlign: TextAlign.justify,
         style: GoogleFonts.libreBaskerville(fontSize: 13.0),
       ),
-      padding: EdgeInsets.all(15.0),
+      padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
     );
 
     final reservationButton = Container(
@@ -174,11 +150,9 @@ class RestaurantDetailsPage extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) => ReservationPage(
-                        selectedRestaurant: restaurant,
-                        user: user
-                      )));
+                      selectedRestaurant: restaurant, user: user)));
         },
-        color: darkRedColor,
+        color: Utils.darkRedColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
         ),
@@ -186,9 +160,9 @@ class RestaurantDetailsPage extends StatelessWidget {
     );
 
     return Container(
-      height: MediaQuery.of(context).size.height * 0.5,
+      height: MediaQuery.of(context).size.height * 0.3,
       width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.all(12),
+      padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
       child: Center(
         child: Column(
           children: <Widget>[descriptionText, reservationButton],
@@ -199,13 +173,13 @@ class RestaurantDetailsPage extends StatelessWidget {
 
   Widget _mapsLocation() {
     return Container(
-        height: 300,
-        width: 400,
-        margin: EdgeInsets.only(bottom: 20.0),
-        alignment: Alignment.center,
-        child: MapsRestaurantLocation(
-            latitude: restaurant.latitude, longitude: restaurant.longitude),
-        );
+      height: 300,
+      width: 300,
+      margin: EdgeInsets.only(bottom: 20.0),
+      alignment: Alignment.topCenter,
+      child: MapsRestaurantLocation(
+          latitude: restaurant.latitude, longitude: restaurant.longitude),
+    );
   }
 
   @override

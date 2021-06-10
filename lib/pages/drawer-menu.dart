@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reservations/authentication.dart';
+import 'package:flutter_reservations/pages/favorite_restaurants_page.dart';
 import 'package:flutter_reservations/pages/login_page.dart';
 import 'package:flutter_reservations/model/restaurant.dart';
-import 'package:flutter_reservations/pages/restaurantsList.dart';
-import 'package:flutter_reservations/pages/reservations_history.dart';
+import 'package:flutter_reservations/pages/restaurants_home_page.dart';
+import 'package:flutter_reservations/util/utils.dart';
 
 class DrawerMenu extends StatelessWidget {
   final User? user;
@@ -51,14 +52,6 @@ class DrawerMenu extends StatelessWidget {
     );
   }
 
-  Route _routeToHistoryPage() {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          ReservationsHistoryList(
-              user: user, favoriteRestaurants: favoriteRestaurants),
-    );
-  }
-
   Widget _getGoogleImage() {
     return (user != null && user!.photoURL != null)
         ? ClipOval(
@@ -86,36 +79,11 @@ class DrawerMenu extends StatelessWidget {
   }
 
   void _getFavoriteRestaurants(BuildContext context) async {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) {
-          final tiles = favoriteRestaurants.map(
-            (Restaurant pair) {
-              return ListTile(
-                title: Text(
-                  pair.name,
-                  style: TextStyle(fontSize: 26.0),
-                ),
-              );
-            },
-          );
-          final divided = tiles.isNotEmpty
-              ? ListTile.divideTiles(context: context, tiles: tiles).toList()
-              : <Widget>[];
-
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Favorites'),
-              backgroundColor: Colors.orange,
-            ),
-            body: ListView(
-              children: divided,
-              padding: EdgeInsets.only(top: 15),
-            ),
-          );
-        },
-      ),
-    );
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => FavoriteRestaurantsPage(
+                favoriteRestaurants: favoriteRestaurants, user: user)));
   }
 
   Widget _getDrawer(BuildContext context) {
@@ -154,7 +122,8 @@ class DrawerMenu extends StatelessWidget {
               leading: Icon(Icons.history),
               title: Text("Istoric rezervări"),
               onTap: () {
-                Navigator.pushReplacement(context, _routeToHistoryPage());
+                Navigator.pushReplacement(context,
+                    Utils.routeToHistoryPage(user!, favoriteRestaurants));
               },
             ),
             ListTile(
